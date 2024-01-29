@@ -124,7 +124,16 @@ public class Runigram {
 				colorNew[m][n] = image[m][n];
 			}
 		}
-		for(int i=0; i<(image.length)/2; i++)
+		int r;
+		if((image.length/2)==0)
+		{
+			r=image.length/2;
+		}
+		else 
+		{
+			r=((image.length+1)/2);
+		}
+		for(int i=0; i<r; i++)
 		{
 		for(int j=0; j<image[0].length; j++)
 		{
@@ -206,17 +215,11 @@ public class Runigram {
 	 * values in the two input color.
 	 */
 	public static Color blend(Color c1, Color c2, double alpha) {
-		int red1=c1.getRed();
-		int red2=c2.getRed();
-		int green1=c1.getGreen();
-		int green2=c1.getGreen();
-		int blue1=c1.getBlue();
-		int blue2=c1.getBlue();
-		double num = (1-alpha);
-		double newred = (alpha*red1) + (num*red2);
-		double newgreen = (alpha*green1) + (num*green2);
-		double newblue = (alpha*blue1) + (num*blue2);
-		Color newColor = new Color((int)newred, (int)newgreen, (int)newblue);
+		double num = 1-alpha; 
+		int newred = (int) ((alpha*c1.getRed()) + (num*c2.getRed()));
+		int newgreen = (int)((alpha*c1.getGreen()) + (num*c2.getGreen()));
+		int newblue = (int)((alpha*c1.getBlue()) + (num*c2.getBlue()));
+		Color newColor = new Color(newred, newgreen, newblue);
 		return newColor;
 	}
 	
@@ -227,12 +230,14 @@ public class Runigram {
 	 * The two images must have the same dimensions.
 	 */
 	public static Color[][] blend(Color[][] image1, Color[][] image2, double alpha) {
-		Color[][] newImage = new Color[image1.length][image2[0].length];
-		for(int i=0; i<newImage.length; i++)
+		Color[][] newImage = new Color[image1.length][image1[0].length];
+		for(int i=0; i<image1.length; i++)
 		{
-			for(int j=0; j<newImage[0].length; j++)
+			for(int j=0; j<image1[0].length; j++)
 			{
-				newImage[i][j]=blend(image1[i][j], image2[i][j], alpha);
+				
+				Color newC = blend(image1[i][j], image2[i][j], alpha);
+				newImage[i][j]=newC;
 			}
 		}
 		return newImage;
@@ -247,14 +252,15 @@ public class Runigram {
 	public static void morph(Color[][] source, Color[][] target, int n) {
 		if((source.length!=target.length)||(source[0].length!=target[0].length))
 		{
-			scaled(target, source.length, source[0].length);
+			target=scaled(target, source[0].length, source.length);
 		}
-		Color[][] newImage = new Color[target.length][target[0].length];
+		Color[][] newImage = new Color[source.length][source[0].length];
 		for(int i=0; i<n; i++)
 		{
-			newImage = blend(source, target, ((n-i)/n));
+			double a=((n-i)/n);
+			newImage = blend(source, target, a);
 			display(newImage);
-			StdDraw.pause(3000);
+			StdDraw.pause(300);
 		}
 		}
 	
